@@ -6,6 +6,9 @@ namespace Library_API.Models
     {
         [Key]
         public int UserPersonId { get; set; }
+        
+        [Required]
+        public string Username { get; set; }
 
         public string? FirstName { get; set; }
 
