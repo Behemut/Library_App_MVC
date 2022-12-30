@@ -3,7 +3,7 @@
     public class Tokenizator
     {
 
-        readonly static string secretKey = "";
+        readonly static string secretKey = "VypF9njaQUDwx9BvH6ANT5MbmyNHZ3uH";
         readonly static string audienceToken = "*";
         readonly static string issuerToken = "*";
         readonly static int expireTimeMinutes = 10;

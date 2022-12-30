@@ -24,9 +24,24 @@ namespace Library_API.Repository
             return _mapper.Map<UsersPersonDTO>(user);
         }
 
-        public async Task<IEnumerable<UsersPersonDTO>> GetUserProfiles()
+        public async Task<IEnumerable<UsersPersonDTO>> GetUserProfiles(bool status)
         {
-            var users = await _db.UserPersons.ToListAsync();
+            //Declaring initial List (Empty)
+            IEnumerable<UsersPerson> users = new List<UsersPerson>();
+            if (status || !status)
+            {
+                users = await _db.UserPersons
+                    .Where(x => x.Active == status)
+                    //Example WHERE IN CLAUSE
+                    //IREPOS   params string[] includes
+                    //.Where(x => includes.Contains(x.UserPersonId.ToString()))
+                    .ToListAsync();
+            }
+            else
+            {
+                users = await _db.UserPersons.ToListAsync();
+            }
+
             return _mapper.Map<IEnumerable<UsersPersonDTO>>(users);
         }
 
@@ -48,7 +63,10 @@ namespace Library_API.Repository
 
         public async Task<UsersPersonDTO> GetUserByUsername(string username)
         {
-            var user = await _db.UserPersons.Where(x => x.Username == username).FirstOrDefaultAsync();
+            var user = await _db.UserPersons
+                .Where(x => x.Username == username)
+                .Where(x => x.Active == true) //Only allow to get Active users
+                .FirstOrDefaultAsync();
             return _mapper.Map<UsersPersonDTO>(user);
         }
 

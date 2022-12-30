@@ -9,24 +9,22 @@ namespace Library_API.Repository
 {
     public class UserRepository  //: IUserRepository
     {
-        private readonly ApplicationDBContext _db;
-        private readonly IMapper _mapper;
+        //private readonly ApplicationDBContext _db;
+        //private readonly IMapper _mapper;
 
-        public UserRepository(ApplicationDBContext db, IMapper mapper)
-        {
-            _db = db;
-            _mapper = mapper;
-        }
+        //public UserRepository(ApplicationDBContext db, IMapper mapper)
+        //{
+        //    _db = db;
+        //    _mapper = mapper;
+        //}
 
 
         //public async Task<UsersDTO> ValidateUser(LoginDTO login)
         //{
+        //    UsersPerson userProfile = await _db.UserPersons.Where(x => x.Username == login.UserName).FirstOrDefaultAsync();
 
-        //    UserProfile userprofile = await _db.UserPersons.Where
-
-        //    return _mapper.Map<UsersDTO>(user);
+        //    Users
         //}
-
 
 
 

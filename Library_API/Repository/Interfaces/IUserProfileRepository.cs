@@ -5,7 +5,7 @@ namespace Library_API.Repository.Interfaces
 {
     public interface IUserProfileRepository
     {
-        Task<IEnumerable<UsersPersonDTO>> GetUserProfiles();
+        Task<IEnumerable<UsersPersonDTO>> GetUserProfiles(bool status);
         Task<UsersPersonDTO> GetUserProfileById(int id);
         Task<UsersPersonDTO> CreateUpdateUserProfile(UsersPersonDTO user);
         Task<UsersPersonDTO> GetUserByUsername(string username);

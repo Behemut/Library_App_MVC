@@ -9,6 +9,9 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using System.Text.Json.Serialization;
 using Microsoft.OpenApi.Models;
+using Library_API.Repository.Interfaces;
+using Library_API.Repository;
+using Library_API;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -29,7 +32,7 @@ builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
     options.Password.RequireLowercase = false;
     options.Password.RequireNonAlphanumeric = false;
     options.Password.RequireUppercase = false;
-    options.Password.RequiredLength = 1;
+    options.Password.RequiredLength = 8;
 })
     .AddEntityFrameworkStores<ApplicationDBContext>()
     .AddDefaultTokenProviders();
@@ -89,7 +92,23 @@ builder.Services.AddSwaggerGen(options =>
 
 
 //IMAPPER 
-//IMapper mapper = MappingConfig().RegisterMaps().CreateMapper();
+IMapper mapper = MappingConfig.RegisterMaps().CreateMapper();
+
+builder.Services.AddSingleton(mapper);
+
+builder.Services.AddScoped<IUserProfileRepository, UserProfileRepository>();
+
+//builder.Services.AddScoped<IUserRepository, UserRepository>();
+//builder.Services.AddScoped<IBookRepository, BookRepository>();
+//builder.Services.AddScoped<IAuthorRepository, AuthorRepository>();
+//builder.Services.AddScoped<IGenreRepository, GenreRepository>();
+
+builder.Services.AddScoped<ITokenRepository, TokenRepository>();
+
+builder.Services.AddScoped<ApplicationUser, ApplicationUser>();
+
+
+builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
 
 
@@ -108,6 +127,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
 
