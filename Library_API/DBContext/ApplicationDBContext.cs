@@ -16,6 +16,7 @@ namespace Library_API.DBContext
             
             base.OnModelCreating(builder);
 
+
             //builder.Entity<Books>()
             //    .HasMany<Genres>(b => b.Genres)
             //    .WithMany(g => g.Books)
@@ -26,6 +27,9 @@ namespace Library_API.DBContext
             //    .WithMany(a => a.Books)  
             //    .UsingEntity(j => j.ToTable("BookAuthors"));
 
+            builder.Entity<UsersPerson>()
+              .HasIndex(u => u.Username)
+              .IsUnique();
 
             builder.Entity<Borrows>().HasKey(b => new { b.BookId, b.UserId });
      
@@ -51,7 +55,6 @@ namespace Library_API.DBContext
                 .WithMany(a => a.BooksAuthors)
                 .HasForeignKey(b => b.AuthorId);
 
-
             builder.Entity<BooksGenres>().HasKey(b => new { b.BookId, b.GenreId });
 
             builder.Entity<BooksGenres>()
@@ -63,8 +66,6 @@ namespace Library_API.DBContext
                 .HasOne(b => b.Genre)
                 .WithMany(g => g.BooksGenres)
                 .HasForeignKey(b => b.GenreId);
-
-
         }
 
         
@@ -76,5 +77,10 @@ namespace Library_API.DBContext
 
         public DbSet<UsersPerson> UserPersons { get; set; }
         public DbSet<Borrows> Borrows { get; set; }
+        public DbSet<BooksAuthors> BooksAuthors { get; set; }
+        public DbSet<BooksGenres> BooksGenres { get; set; }
+        
+
+
     }
 }

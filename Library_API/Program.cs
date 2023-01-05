@@ -99,8 +99,12 @@ builder.Services.AddSingleton(mapper);
 builder.Services.AddScoped<IUserProfileRepository, UserProfileRepository>();
 
 //builder.Services.AddScoped<IUserRepository, UserRepository>();
-//builder.Services.AddScoped<IBookRepository, BookRepository>();
-//builder.Services.AddScoped<IAuthorRepository, AuthorRepository>();
+builder.Services.AddScoped<IBookRepository, BookRepository>();
+builder.Services.AddScoped<IAuthorRepository, AuthorRepository>();
+builder.Services.AddScoped<IBookAuthorRepository, BookAuthorRepository>();
+builder.Services.AddScoped<IBookGenreRepository, BookGenreRepository>();
+
+
 //builder.Services.AddScoped<IGenreRepository, GenreRepository>();
 
 builder.Services.AddScoped<ITokenRepository, TokenRepository>();

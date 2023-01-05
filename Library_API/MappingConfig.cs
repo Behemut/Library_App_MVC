@@ -14,6 +14,16 @@ namespace Library_API
                 config => {
 
                     config.CreateMap<UsersPerson, UsersPersonDTO>().ReverseMap();
+                    config.CreateMap<Authors, AuthorsDTO>().ReverseMap();
+                    config.CreateMap<Books, BooksDTO>().ReverseMap();
+                    config.CreateMap<Borrows, BorrowsDTO>().ReverseMap();
+                    config.CreateMap<Genres, GenresDTO>().ReverseMap();
+                    config.CreateMap<BooksAuthors, BooksAuthorsDTO>().ReverseMap();
+                    config.CreateMap<BooksGenres, BooksGenresDTO>().ReverseMap();
+
+
+                    config.CreateMap<APITokenDTO, APITokenDTO>().ReverseMap();
+
 
 
                 });
