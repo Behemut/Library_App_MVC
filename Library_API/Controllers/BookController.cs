@@ -1,7 +1,5 @@
 ﻿using Library_API.Models;
 using Library_API.Models.DTO;
-using Library_API.Models;
-using Library_API.Models.DTO;
 using Library_API.Repository.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -143,8 +141,6 @@ namespace Library_API.Controllers
                 _response.IsSuccess = false;
                 _response.ErrorMessage = new List<string>() { ex.Message };
             }
-
-
             return _response;
         }
 
@@ -166,7 +162,6 @@ namespace Library_API.Controllers
                 _response.IsSuccess = false;
                 _response.ErrorMessage = new List<string>() { ex.Message };
             }
-
             return _response;
         }
 
@@ -187,5 +182,65 @@ namespace Library_API.Controllers
                 }
                 return _response;          
         }
+
+        [HttpPost("AddBookGenre")]
+        public async Task<object> AddBookGenre(int genre, int book, int created)
+        {
+            try
+            {
+                BooksGenresDTO BkGModel = await _bookGenreRepository.CreateBookGenre(genre, book, created);
+                _response.IsSuccess = true;
+                _response.Result = BkGModel;
+                _response.DisplayMessage = "Book - Genre created successfully";
+
+            }
+            catch (Exception ex)
+            {
+                _response.DisplayMessage = "Error Occured";
+                _response.IsSuccess = false;
+                _response.ErrorMessage = new List<string>() { ex.Message };
+            }
+            return _response;
+        }
+
+        [HttpPut("UpdateBookGenre")]
+        public async Task<object> UpdateBookGenre(int genre, int book, int created)
+        {
+            try
+            {
+                BooksGenresDTO BkGModel = await _bookGenreRepository.UpdateBookGenre(genre, book, created);
+                _response.IsSuccess = true;
+                _response.Result = BkGModel;
+                _response.DisplayMessage = "Book - Genre updated successfully";
+
+            }
+            catch (Exception ex)
+            {
+                _response.DisplayMessage = "Error Occured";
+                _response.IsSuccess = false;
+                _response.ErrorMessage = new List<string>() { ex.Message };
+            }
+            return _response;
+        }
+
+
+        [HttpDelete("DeleteBookGenre")]
+        public async Task<object> DeleteBookGenre(int genre, int book, int created)
+        {
+            try
+            {
+                await _bookGenreRepository.DeleteBookGenre(genre, book, created);
+                _response.DisplayMessage = "Book - Genre deleted successfully";
+                _response.IsSuccess = true;
+            }
+            catch (Exception ex)
+            {
+                _response.DisplayMessage = ex.Message;
+                _response.IsSuccess = false;
+                _response.ErrorMessage = new List<string>() { ex.Message };
+            }
+            return _response;
+        }
+        
     }
 }

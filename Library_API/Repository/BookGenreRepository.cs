@@ -17,32 +17,48 @@ namespace Library_API.Repository
             _mapper = mapper;
         }
 
-        public async Task<BooksGenresDTO> CreateUpdateBookGenre(BooksGenresDTO bookGenre)
+        public async Task<BooksGenresDTO> CreateBookGenre(int genre, int book, int created)
         {
-            var bookGenreEntity = _mapper.Map<BooksGenresDTO,BooksGenres>(bookGenre);
-            if (bookGenre.BookId == 0 && bookGenre.GenreId == 0)
+            BooksGenresDTO model = new BooksGenresDTO();
+            model.GenreId = genre;
+            model.BookId = book;
+            model.CreatedAt = DateTime.Now;
+            model.CreatedBy = created;
+            _db.BooksGenres.Add(_mapper.Map<BooksGenres>(model));
+            await _db.SaveChangesAsync();
+            return _mapper.Map<BooksGenresDTO>(model);
+        }
+
+
+        public async Task<BooksGenresDTO> UpdateBookGenre(int genre, int book, int created)
+        {
+            var model = await _db.BooksGenres.Where(x => x.GenreId == genre && x.BookId == book).FirstOrDefaultAsync();
+            model.GenreId = genre;
+            model.BookId = book;
+            model.CreatedBy = created;
+            model.UpdatedAt = DateTime.Now;
+            _db.BooksGenres.Update(_mapper.Map<BooksGenres>(model));
+            await _db.SaveChangesAsync();
+            return _mapper.Map<BooksGenresDTO>(model);
+        }
+
+        public async Task<BooksGenresDTO> DeleteBookGenre(int genre, int book, int created)
+        {
+            var bookGenre = await _db.BooksGenres.Where(x => x.GenreId == genre && x.BookId == book).FirstOrDefaultAsync();
+            if (bookGenre == null)
             {
-                _db.BooksGenres.Add(bookGenreEntity);
+                return _mapper.Map<BooksGenresDTO>(null);
             }
             else
             {
-                _db.BooksGenres.Update(bookGenreEntity);
+                _db.BooksGenres.Remove(bookGenre);
+                await _db.SaveChangesAsync();
+                return _mapper.Map<BooksGenresDTO>(bookGenre);
             }
-            await _db.SaveChangesAsync();
-            return _mapper.Map<BooksGenresDTO>(bookGenreEntity);
         }
 
-        public async Task<BooksGenresDTO> DeleteBookGenre(int id)
-        {
-            var bookGenre = await _db.BooksGenres.FindAsync(id);
 
-            if (bookGenre == null)
-            {
-                return null;
-            }
-            _db.BooksGenres.Remove(bookGenre);
-            await _db.SaveChangesAsync();
-            return _mapper.Map<BooksGenresDTO>(bookGenre);
-        }
+
+
     }
 }

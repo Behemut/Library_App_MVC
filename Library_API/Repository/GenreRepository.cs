@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Library_API.Repository
 {
-    public class GenreRepository
+    public class GenreRepository : IGenreRepository
     {
         private readonly ApplicationDBContext _db;
         private readonly IMapper _mapper;
@@ -17,6 +17,20 @@ namespace Library_API.Repository
             _db = db;
             _mapper = mapper;
         }
+
+
+        public async Task<IEnumerable<GenresDTO>> GetGenres()
+        {
+            var genres = await _db.Genres.ToListAsync();
+            return _mapper.Map<IEnumerable<GenresDTO>>(genres);
+        }
+
+        public async Task<GenresDTO> GetGenreById(int id)
+        {
+            var genre = await _db.Genres.Where(x => x.GenreId == id).FirstOrDefaultAsync();
+            return _mapper.Map<GenresDTO>(genre);
+        }
+
 
         public async Task<GenresDTO> CreateUpdateGenre(GenresDTO genre)
         {
@@ -43,9 +57,6 @@ namespace Library_API.Repository
             await _db.SaveChangesAsync();
             return _mapper.Map<GenresDTO>(genre);
         }
-
-
-
 
     }
 }

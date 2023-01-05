@@ -7,7 +7,7 @@ namespace Library_API.Repository.Interfaces
     {
         public Task<BorrowsDTO> CreateUpdateBorrow(BorrowsDTO borrow);
 
-        public Task<BorrowsDTO> GetBorrowById(int id);
+        public Task<Borrows> GetBorrowById(int id);
 
         public Task<BorrowsDTO> DeleteBorrow(int id);
 

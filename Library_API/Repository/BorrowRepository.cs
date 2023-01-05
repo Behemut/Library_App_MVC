@@ -46,14 +46,14 @@ namespace Library_API.Repository
             return _mapper.Map<BorrowsDTO>(borrow);
         }
 
-        public async Task<BorrowsDTO> GetBorrowById(int id)
+        public async Task<Borrows> GetBorrowById(int id)
         {
             var borrow = await _db.Borrows.FindAsync(id);
             if (borrow == null)
             {
                 return null;
             }
-            return _mapper.Map<BorrowsDTO>(borrow);
+            return _mapper.Map<Borrows>(borrow);
         }
 
         public async Task<IEnumerable<Borrows>> GetBorrows(string? username)

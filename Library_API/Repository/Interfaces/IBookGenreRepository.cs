@@ -5,8 +5,8 @@ namespace Library_API.Repository.Interfaces
 {
     public interface IBookGenreRepository
     {
-        public Task<BooksGenresDTO> CreateUpdateBookGenre(BooksGenresDTO bookGenre);
-
-        public Task<BooksGenresDTO> DeleteBookGenre(int id);
+        public Task<BooksGenresDTO> CreateBookGenre(int genre, int book, int created);
+        public Task<BooksGenresDTO> UpdateBookGenre(int genre, int book, int created);
+        public Task<BooksGenresDTO> DeleteBookGenre(int genre, int book, int created);
     }
 }
