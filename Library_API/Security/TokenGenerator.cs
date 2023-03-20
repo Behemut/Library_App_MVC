@@ -4,40 +4,43 @@ using System.Security.Cryptography;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Text;
+using Domain;
+using Library_API.Models.DTO;
 
 namespace Library_API.Security
 {
     public class TokenGenerator
     {
-        public static string GenerateTokenJWT(string username)
+        public string CreateToken(UsersPerson user)
         {
-            var secretKey = Tokenizator.SecretKey;
+            var claims = new List<Claim>
+            {
+                new Claim(JwtRegisteredClaimNames.NameId, user.Id),
+                new Claim(JwtRegisteredClaimNames.UniqueName, user.UserName),
+                new Claim(JwtRegisteredClaimNames.Email, user.Email),
+                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())             
+            };
+
             var audienceToken = Tokenizator.AudienceToken;
             var issuerToken = Tokenizator.IssuerToken;
-            var expireTime = Tokenizator.ExpirationTime;
-            var securityKey = new SymmetricSecurityKey(Encoding.Default.GetBytes(secretKey));
-            var signingCredentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256Signature);
-
-            ClaimsIdentity claimsIdentity = new ClaimsIdentity(new[] {
-                    new Claim(ClaimTypes.Name, username)
-                });
-
+            var expireTime = Tokenizator.ExpireTimeMinutes;
+            var securityKey = new SymmetricSecurityKey(Encoding.Default.GetBytes(Tokenizator.SecretKey));
+            var signingCredentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha512Signature);
             var tokenHandler = new JwtSecurityTokenHandler();
 
             var JWTSecurityToken = tokenHandler.CreateJwtSecurityToken(
                 audience: audienceToken,
                 issuer: issuerToken,
-                subject: claimsIdentity,
+                subject: new ClaimsIdentity(claims),
                 notBefore: DateTime.UtcNow,
-                expires: DateTime.UtcNow.AddMinutes(Convert.ToInt32(expireTime)),
-                signingCredentials:  signingCredentials
-                ) ;
+                expires: DateTime.UtcNow.AddMinutes(expireTime),
+                signingCredentials: signingCredentials
+                );
 
             var jwtTokenString = tokenHandler.WriteToken(JWTSecurityToken);
             return jwtTokenString;
         }
-
-
+        
         public static JwtSecurityToken CreateToken(List<Claim> authClaims)
         {
             var authSigningKey = new SymmetricSecurityKey(Encoding.Default.GetBytes(Tokenizator.SecretKey));
@@ -48,26 +51,34 @@ namespace Library_API.Security
                 audience: Tokenizator.AudienceToken,
                 expires: DateTime.UtcNow.AddMinutes(tokenValidityInMinutes),
                 claims: authClaims,
-                signingCredentials: new SigningCredentials(authSigningKey, SecurityAlgorithms.HmacSha256)
+                signingCredentials: new SigningCredentials(authSigningKey, SecurityAlgorithms.HmacSha512Signature)
                 );
-
             return token;
         }
 
-        public static string GenerateRefreshToken()
+        public RefreshToken GenerateRefreshToken()
         {
-            var randomNumber = new byte[64];
-            //using (var rng = RandomNumberGenerator.Create())
-            //{
-            //    rng.GetBytes(randomNumber);
-            //    return Convert.ToBase64String(randomNumber);
-            //}
+            var randomNumber = new byte[32];
             using var rng = RandomNumberGenerator.Create();
             rng.GetBytes(randomNumber);
-            return Convert.ToBase64String(randomNumber);
+
+            return new RefreshToken
+            {
+                Token = Convert.ToBase64String(randomNumber),
+             
+            };
         }
 
-        public static ClaimsPrincipal? GetPrincipalFromExpiredToken(string? token)
+       
+        //public string generaterefreshtoken()
+        //{
+        //    var randomnumber = new byte[64];
+        //    using var rng = randomnumbergenerator.create();
+        //    rng.getbytes(randomnumber);
+        //    return convert.tobase64string(randomnumber);
+        //}
+
+        public  ClaimsPrincipal? GetPrincipalFromExpiredToken(string? token)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
             var jwtToken = tokenHandler.ReadJwtToken(token);
@@ -91,7 +102,7 @@ namespace Library_API.Security
             SecurityToken securityToken;
             var principal = tokenHandler.ValidateToken(token, tokenValidationParameters, out securityToken);
             var jwtSecurityToken = securityToken as JwtSecurityToken;
-            if (jwtSecurityToken == null || !jwtSecurityToken.Header.Alg.Equals(SecurityAlgorithms.HmacSha256, StringComparison.InvariantCultureIgnoreCase))
+            if (jwtSecurityToken == null || jwtSecurityToken.Header.Alg.Equals(SecurityAlgorithms.HmacSha512Signature, StringComparison.InvariantCultureIgnoreCase))
                 throw new SecurityTokenException("Invalid token");
 
             return principal;
